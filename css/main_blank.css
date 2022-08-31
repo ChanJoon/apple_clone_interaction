@@ -1,0 +1,309 @@
+@charset    'utf-8';
+
+html {
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+}
+body {
+    /* overflow-x: hidden; */
+    color: rgb(29, 29, 31);
+    letter-spacing: -0.05em;
+    background: white;
+}
+p {
+    line-height: 1.6;
+}
+a {
+    color: rgb(29, 29, 31);
+    text-decoration: none;
+}
+body.before-loading {
+    overflow: hidden;
+}
+.container {
+    /* iPhone 가로 스크롤 방지 */
+    /* overflow-x: hidden; */
+    /*TODO 이걸 넣으면 넓은 화면일 때 맨 하단에서 이중스크롤 발생 */
+}
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background: white;
+    opacity: 0;
+    transition: 0.5s;
+}
+.before-loading .container {
+    display: none;
+}
+.before-loading .loading{
+    opacity: 1;
+}
+@keyframes loading-spin {
+    100% {transform:rotate(360deg);}
+}
+@keyframes loading-circle-ani {
+    0% {stroke-dashoffset: 157;}
+    75% {stroke-dashoffset: -147;}
+    100% {stroke-dashoffset: -157;}
+}
+.loading-circle {
+    width: 54px;
+    height: 54px;
+    animation: loading-spin 5s infinite;
+}
+.loading-circle circle {
+    stroke: black;
+    stroke-width: 3;
+    /* getTotallength()로 stroke의 길이를 얻어올 수 있음 */
+    stroke-dasharray: 157;
+    stroke-dashoffset: 30%;
+    fill: transparent;
+    animation: loading-circle-ani 2s infinite;
+}
+/* DONE 현재 스크롤 내려갔다 올라올 시 global-nav-links가 보이지 않는 문제가 있음 */
+/* global-nav 태그가 닫히지 않았음 */
+.global-nav {
+    position: absolute;
+    z-index: 30;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 44px; /* 첫번째 메뉴바 높이 */
+    padding: 0 1rem;
+}
+.local-nav {
+    position: absolute;
+    z-index: 20;
+    top: 45px;
+    left: 0;
+    width: 100%; /* scroll시 상단 메뉴바를 제외하고 scroll-section이 적용되므로 ,공간차지 안하도록 설정 */
+    height: 52px;
+    padding: 0 1rem;
+    border-bottom: 1px solid #ddd;
+}
+.local-nav-sticky .local-nav {
+    /* 스크롤을 올렸을 때 아래 메뉴바 고정 */
+    position: fixed;
+    top: 0;
+    background: rgba(255, 255, 255, 0.1);
+    /* iPhone에서는 -webkit-을 붙여줘야 함 */
+    -webkit-backdrop-filter: saturate(180%) blur(15px);
+    -moz-backdrop-filter: saturate(180%) blur(15px);
+    -o-backdrop-filter: saturate(180%) blur(15px);
+    backdrop-filter: saturate(180%) blur(15px);
+}
+/* TODO local-nav-links 에서 margin을 주는데, product-name과 a tag 부분에서 좌우 여백 생기고, 없애고, 리팩토링 하는부분을 살펴볼 것. */
+.global-nav-links, 
+.local-nav-links {
+    display: flex; /* not block */
+    align-items: center;
+    max-width: 1000px; /* 폭이 줄어도 자연스럽게 줄도록 최대를 1000px로 */
+    height: 100%; /* display flex 이므로 align items 이용하여 세로도 가운데 오도록. 높이를 설정하지 않아서 nav-links는 text높이만큼 해당되므로 height 100%로 하여 nav와 일치하도록 =height: 44px; */
+    margin: 0 auto; /* center 정렬 */
+}
+.global-nav-links {
+    justify-content: space-between; /* 균일한 간격, 양쪽으로 붙도록 */
+}
+.local-nav-links .product-name {
+    margin-right: auto; /* AirMug PRo 글씨만 왼쪽으로 둘 것이므로, margin right auto를 사용 */
+    font-size: 1.4rem;
+    font-weight: bold;
+}
+.local-nav-links {
+    font-size: 0.8rem;
+}
+.local-nav-links a:not(.product-name) {
+    margin-left: 2em;
+}
+.scroll-section {
+    position: relative; /* MEMO canvas.offsetTop 을 사용하기위해 설정 why? */
+    padding-top: 50vh; /*view height 의 절반 만큼 */
+}
+#scroll-section-0 h1 {
+    /* 기본 position은 static 이므로, canvas의 position: absolute 보다 아래쪽에 위치하게 되고 보이지 않게 된다. */
+    position: relative;
+    z-index: 5;
+    top: -10vh;
+    font-size: 4rem; /* 14x4 px */
+    text-align: center;
+}
+.main-message {
+    /* 가로방향 정렬 justify-content 세로방향 정렬 align-items */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top : 35vh; /* 내용부분 위치 */
+    height: 3em; /* 2.5rem x 3; font-size에 맞게 조절 가능 */
+    font-size: 2.5rem;
+    margin: 5px 0;
+    opacity: 0; /* TODO main-message는 모두 스크롤에 따라 보여지므로 기본 투명도를 0으로 설정;꼭 여기서 설정해야하나? */
+}
+.main-message p {
+    line-height: 1.2;
+    font-weight: bold;
+    text-align: center;
+}
+.main-message small {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+#scroll-section-1 {
+    height: 8rem;
+}
+#scroll-section-2 .main-message {
+    font-size: 3.5rem;
+}
+.description {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0.1rem; /* 메뉴바와 그리드를 맞추기 위해 동일한 padding을 넣어줌.*/
+    font-size: 1.2rem;
+    color: #888;
+}
+.description strong {
+    float: left; /* 글씨가 이 영역을 감싸고 있음. */
+    margin-right: 0.2em;
+    font-size: 3rem;
+    color: rgb(29, 29, 31)
+}
+.desc-message {
+    width: 50vw;
+    font-weight: bold;
+    opacity: 0;
+}
+.desc-message b {
+    display: flex;
+    width: 500px;
+}
+.pin {
+    width: 1px;
+    height: 100px;
+    background: rgb(29, 29, 31);
+}
+#scroll-section-2 .b {
+    top: 10%;
+    left: 55%;
+}
+#scroll-section-2 .c {
+    top: 15%;
+    left: 45%;
+}
+
+.mid-message {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 1rem;/* 그리드 맞추기 with local-nav */
+    font-size: 2rem;
+    color: #888;
+}
+.mid-message strong {
+    color: rgb(29, 29, 31);
+}
+.canvas-caption {
+    max-width: 1000px;
+    margin: -24rem auto 0;
+    padding: 0 1rem;
+    font-size: 1.2rem;
+    color: #888;
+}
+.footer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 7rem;
+    color: white;
+    background: goldenrod;
+}
+.sticky-elem {
+    display: none;
+    position: fixed;
+    left: 0;
+    width: 100%;
+}
+/* TODO #show-scene 이 html에 없음 */
+#show-scene-0 #scroll-section-0 .sticky-elem, /* body id에 따라 sticky-elem이 나타남 */
+#show-scene-1 #scroll-section-1 .sticky-elem,
+#show-scene-2 #scroll-section-2 .sticky-elem,
+#show-scene-3 #scroll-section-3 .sticky-elem {
+    display: block;
+    will-change: transform, opacity;
+}
+.scroll-effect-end .sticky-elem {
+    display: none !important;
+}
+.sticky-elem-canvas {
+    top: 0;
+    height: 100%; /* cavas contatiner를 꽉 차도록 */
+}
+
+.sticky-elem-canvas canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+
+.image-blend-canvas.sticky {
+    position: fixed;
+    top: 0;
+}
+
+#scroll-section-3 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.static-content {
+    margin-bottom: 10rem;
+}
+
+/* TODO 미디어 쿼리 대신 vw vh를 쓰면 안되는 것인가? */
+@media (min-width: 1024px) { /* 창크기가 1024px 이상이면 */
+    #scroll-section-0 h1 {
+        font-size: 9vw; /* viewpoint */
+    }
+    .main-message {
+        font-size: 4vw;
+    }
+    .description {
+        font-size: 2rem;
+    }
+    .desription strong {
+        padding: 0;
+        font-size: 6rem;
+    }
+    #scroll-section-2 .main-message {
+        font-size: 6vw;
+    }
+    .main-message small {
+        font-size: 1.5vw;
+    }
+    .desc-message {
+        width: 40%;
+    }
+    #scroll-section-2 .b {
+        top: 20%;
+        left: 53%;
+    }
+    #scroll-section-2 .c {
+        left: 55%;
+    }
+    .mid-message {
+        width: 1000px;
+        padding: 0;
+        font-size: 4vw; /* main-message랑 같게, 창 크기의 4% */
+    }
+    .canvas-caption {
+        margin-top: -8rem;
+        padding: 0;
+        font-size: 2rem; /* 28px로 고정 */
+    }
+}
+
